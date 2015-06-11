@@ -1,4 +1,8 @@
 Canvas = require 'canvas'
+NodeTtl = require 'node-ttl'
+crypto = require 'crypto'
+
+ttl = new NodeTtl()
 
 pickRandom = (items)->
     items[Math.floor(Math.random() * items.length)]
@@ -55,13 +59,15 @@ exports.captcha = captcha
 exports.middleware = (options)->
     (req, res)->
         {canvas, code} = captcha options
-        req.session.captcha = code
-        canvas.toBuffer (err, buffer)->
-            res.end buffer
+        hash = crypto.randomBytes(16).toString('hex')
+        ttl.push(hash, code, null, 120);
+        res.setHeader 'X-Captcha', hash
+        canvas.toDataURL (err, str)->
+            res.end str
 
 exports.verifyCaptcha = (req, res, next)->
-    req.verifyCaptcha = (input)->
-        _captcha = req.session.captcha
-        delete req.session.captcha
+    req.verifyCaptcha = (key, input)->
+        _captcha = ttl.get(key)
+        ttl.del(key)
         _captcha and _captcha is input
     next()
