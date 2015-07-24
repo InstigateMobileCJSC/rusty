@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/zweifisch/rusty",
   "dependencies": {
-    "canvas": "^1.1.6",
+    "canvas": "~1.1.6",
     "node-ttl": "0.0.1"
   }
 }

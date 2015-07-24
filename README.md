@@ -6,7 +6,7 @@ captcha for nodejs
 rusty = require("rusty");
 
 // available options
-app.use("/captcha.png", rusty.middlware({
+app.use("/captcha", rusty.middlware({
     width: 120,
     height: 50,
     chars: 'abcdefghijklmnopqrstuvwxyz0123456789',
@@ -16,7 +16,7 @@ app.use("/captcha.png", rusty.middlware({
 }));
 
 app.post("/login", rusty.verifyCaptcha, function(req, res) {
-    if(req.verifyCaptcha(req.body.captcha)) {
+    if(req.verifyCaptcha(req.body.key, req.body.captcha)) {
         // human here
     }
 });
